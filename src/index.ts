@@ -1,14 +1,9 @@
 const fs = require('fs');
 const readline = require('readline');
 
-interface Lox {
-  main(args: string[]): void;
-  runFile(path: string): void;
-  runPrompt(): void;
-  run(source: string): void;
-}
-
 class Lox {
+  static hadError = false;
+
   static main(args: string[]) {
     if (args.length > 1) {
       console.error('Usage: lox [script]');
@@ -28,6 +23,9 @@ class Lox {
     });
 
     this.run(bytes);
+    if (this.hadError) {
+      process.exitCode = 65;
+    }
   }
 
   // REPL runner
@@ -51,6 +49,7 @@ class Lox {
       if (line) {
         try {
           this.run(line);
+          this.hadError = false;
         } catch (e) {
           console.error(e);
         }
@@ -62,6 +61,15 @@ class Lox {
 
   private static run(source: string) {
     console.log(source);
+  }
+
+  static error(line: number, message: string) {
+    this.report(line, '', message);
+  }
+
+  private static report(line: number, where: string, message: string) {
+    console.error(`[line ${line}] Error${where}: ${message}`);
+    this.hadError = true;
   }
 }
 
