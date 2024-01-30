@@ -1,0 +1,25 @@
+{
+  "name": "tlox",
+  "version": "1.0.0",
+  "description": "A Typescript implementation of a Lox compiler",
+  "main": "index.js",
+  "repository": "https://github.com/jeengland/tlox.git",
+  "author": "Jacob Cavazos-England <jacob.e.england@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node dist/index.js",
+    "lox": "node dist/index.js",
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "npm.cmd run compile",
+    "pretest": "npm.cmd run compile",
+    "posttest": "npm.cmd run lint"
+  },
+  "devDependencies": {
+    "@types/node": "20.8.2",
+    "typescript": "~5.2.0",
+    "gts": "^5.2.0"
+  }
+}
