@@ -38,6 +38,12 @@ class GenerateAst {
 
     writeStream.write('export abstract class Expr {\n');
 
+    writeStream.write('  abstract accept<R>(visitor: Visitor<R>): R;\n');
+
+    writeStream.write('}\n\n');
+
+    this.defineVisitor(writeStream, baseName, types);
+
     for (const type of types) {
       const className = type.split('|')[0].trim();
       const fields = type.split('|')[1].trim();
@@ -47,8 +53,6 @@ class GenerateAst {
         writeStream.write('\n');
       }
     }
-
-    writeStream.write('}\n');
   }
 
   private static defineType(
@@ -57,28 +61,52 @@ class GenerateAst {
     className: string,
     fieldList: string
   ) {
-    writeStream.write(
-      `  static ${className} = class ${className} implements ${baseName} {\n`
-    );
-
-    // Constructor
-    writeStream.write(`    constructor(${fieldList}) {\n`);
+    writeStream.write(`class ${className} implements ${baseName} {\n`);
 
     // Store parameters in fields
     const names = fieldList.split(', ').map(field => field.split(': ')[0]);
     const fields = fieldList.split(', ').map(field => field.split(': ')[1]);
-    for (let i = 0; i < names.length; i++) {
-      writeStream.write(`      this.${names[i]} = ${names[i]};\n`);
-    }
-
-    writeStream.write('    }\n\n');
 
     // Fields
     for (let i = 0; i < names.length; i++) {
-      writeStream.write(`    ${names[i]}: ${fields[i]};\n`);
+      writeStream.write(`  ${names[i]}: ${fields[i]};\n`);
     }
 
-    writeStream.write('  };\n');
+    writeStream.write('\n');
+
+    // Constructor
+    writeStream.write(`  constructor(${fieldList}) {\n`);
+
+    for (let i = 0; i < names.length; i++) {
+      writeStream.write(`    this.${names[i]} = ${names[i]};\n`);
+    }
+
+    writeStream.write('  }\n\n');
+
+    // Accept method
+    writeStream.write('  public accept<R>(visitor: Visitor<R>): R {\n');
+    writeStream.write(
+      `    return visitor.visit${className}${baseName}(this);\n`
+    );
+
+    writeStream.write('  }\n');
+
+    writeStream.write('}\n');
+  }
+
+  private static defineVisitor(
+    writeStream: fs.WriteStream,
+    baseName: string,
+    types: string[]
+  ) {
+    writeStream.write('interface Visitor<R> {\n');
+    for (const type of types) {
+      const typeName = type.split('|')[0].trim();
+      writeStream.write(
+        `  visit${typeName}${baseName}(${baseName.toLowerCase()}: ${typeName}): R;\n`
+      );
+    }
+    writeStream.write('}\n\n');
   }
 }
 

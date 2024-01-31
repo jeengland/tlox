@@ -5,41 +5,66 @@ import {Token} from './token';
 import {LoxObject} from './types';
 
 export abstract class Expr {
-  static Binary = class Binary implements Expr {
-    constructor(left: Expr, operator: Token, right: Expr) {
-      this.left = left;
-      this.operator = operator;
-      this.right = right;
-    }
+  abstract accept<R>(visitor: Visitor<R>): R;
+}
 
-    left: Expr;
-    operator: Token;
-    right: Expr;
-  };
+interface Visitor<R> {
+  visitBinaryExpr(expr: Binary): R;
+  visitGroupingExpr(expr: Grouping): R;
+  visitLiteralExpr(expr: Literal): R;
+  visitUnaryExpr(expr: Unary): R;
+}
 
-  static Grouping = class Grouping implements Expr {
-    constructor(expression: Expr) {
-      this.expression = expression;
-    }
+class Binary implements Expr {
+  left: Expr;
+  operator: Token;
+  right: Expr;
 
-    expression: Expr;
-  };
+  constructor(left: Expr, operator: Token, right: Expr) {
+    this.left = left;
+    this.operator = operator;
+    this.right = right;
+  }
 
-  static Literal = class Literal implements Expr {
-    constructor(value: LoxObject) {
-      this.value = value;
-    }
+  public accept<R>(visitor: Visitor<R>): R {
+    return visitor.visitBinaryExpr(this);
+  }
+}
 
-    value: LoxObject;
-  };
+class Grouping implements Expr {
+  expression: Expr;
 
-  static Unary = class Unary implements Expr {
-    constructor(operator: Token, right: Expr) {
-      this.operator = operator;
-      this.right = right;
-    }
+  constructor(expression: Expr) {
+    this.expression = expression;
+  }
 
-    operator: Token;
-    right: Expr;
-  };
+  public accept<R>(visitor: Visitor<R>): R {
+    return visitor.visitGroupingExpr(this);
+  }
+}
+
+class Literal implements Expr {
+  value: LoxObject;
+
+  constructor(value: LoxObject) {
+    this.value = value;
+  }
+
+  public accept<R>(visitor: Visitor<R>): R {
+    return visitor.visitLiteralExpr(this);
+  }
+}
+
+class Unary implements Expr {
+  operator: Token;
+  right: Expr;
+
+  constructor(operator: Token, right: Expr) {
+    this.operator = operator;
+    this.right = right;
+  }
+
+  public accept<R>(visitor: Visitor<R>): R {
+    return visitor.visitUnaryExpr(this);
+  }
 }
