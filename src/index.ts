@@ -1,7 +1,8 @@
-const fs = require('fs');
-const readline = require('readline');
+import * as fs from 'fs';
+import * as readline from 'readline';
+import {Scanner} from './scanner';
 
-class Lox {
+export class Lox {
   static hadError = false;
 
   static main(args: string[]) {
@@ -60,7 +61,12 @@ class Lox {
   }
 
   private static run(source: string) {
-    console.log(source);
+    const scanner = new Scanner(source);
+    const tokens = scanner.scanTokens();
+
+    for (const token of tokens) {
+      console.log(token.toString());
+    }
   }
 
   static error(line: number, message: string) {
