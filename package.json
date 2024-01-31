@@ -13,6 +13,8 @@
     "clean": "gts clean",
     "compile": "tsc",
     "fix": "gts fix",
+    "ast": "node build/src/tool/generateAst.js ./src",
+    "preast": "npm.cmd run compile",
     "prepare": "npm.cmd run compile",
     "pretest": "npm.cmd run compile",
     "posttest": "npm.cmd run lint"
