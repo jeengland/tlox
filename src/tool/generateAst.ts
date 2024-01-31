@@ -61,7 +61,7 @@ class GenerateAst {
     className: string,
     fieldList: string
   ) {
-    writeStream.write(`class ${className} implements ${baseName} {\n`);
+    writeStream.write(`export class ${className} implements ${baseName} {\n`);
 
     // Store parameters in fields
     const names = fieldList.split(', ').map(field => field.split(': ')[0]);
@@ -99,7 +99,7 @@ class GenerateAst {
     baseName: string,
     types: string[]
   ) {
-    writeStream.write('interface Visitor<R> {\n');
+    writeStream.write('export interface Visitor<R> {\n');
     for (const type of types) {
       const typeName = type.split('|')[0].trim();
       writeStream.write(

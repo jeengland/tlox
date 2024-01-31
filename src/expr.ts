@@ -8,14 +8,14 @@ export abstract class Expr {
   abstract accept<R>(visitor: Visitor<R>): R;
 }
 
-interface Visitor<R> {
+export interface Visitor<R> {
   visitBinaryExpr(expr: Binary): R;
   visitGroupingExpr(expr: Grouping): R;
   visitLiteralExpr(expr: Literal): R;
   visitUnaryExpr(expr: Unary): R;
 }
 
-class Binary implements Expr {
+export class Binary implements Expr {
   left: Expr;
   operator: Token;
   right: Expr;
@@ -31,7 +31,7 @@ class Binary implements Expr {
   }
 }
 
-class Grouping implements Expr {
+export class Grouping implements Expr {
   expression: Expr;
 
   constructor(expression: Expr) {
@@ -43,7 +43,7 @@ class Grouping implements Expr {
   }
 }
 
-class Literal implements Expr {
+export class Literal implements Expr {
   value: LoxObject;
 
   constructor(value: LoxObject) {
@@ -55,7 +55,7 @@ class Literal implements Expr {
   }
 }
 
-class Unary implements Expr {
+export class Unary implements Expr {
   operator: Token;
   right: Expr;
 
