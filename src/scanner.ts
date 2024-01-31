@@ -100,6 +100,39 @@ export class Scanner {
           while (this.peek() !== '\n' && !this.isAtEnd()) {
             this.advance();
           }
+        } else if (this.match('*')) {
+          while (
+            this.peek() !== '*' &&
+            this.peekNext() !== '/' &&
+            !this.isAtEnd()
+          ) {
+            if (this.peek() === '\n') {
+              this.line++;
+            }
+            this.advance();
+          }
+
+          // Decided not to allow for nested block comments
+          // since they can be difficult to detect in a standard
+          // code editor, and are generally used to comment out
+          // large sections of code, which is not a good practice.
+
+          // If for some reason you want to implement nested block
+          // comments, you can do so by adding a counter for the
+          // number of block comments, and incrementing it when
+          // you encounter a '/*', and decrementing it when you
+          // encounter a '*/'. If the counter is greater than 1,
+          // you are in a nested block comment, and should not
+          // exit the block comment until the counter is 0.
+
+          if (this.isAtEnd()) {
+            Lox.error(this.line, 'Unterminated block comment.');
+            return;
+          }
+
+          // consume the closing */
+          this.advance();
+          this.advance();
         } else {
           this.addToken(TokenType.SLASH);
         }

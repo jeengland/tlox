@@ -1,1 +1,5 @@
-Hello from test.lox!
+var num = 22;
+var str = /* "23" */ "22";
+
+print num // print out num;
+print str;
